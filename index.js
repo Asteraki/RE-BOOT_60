@@ -9,8 +9,12 @@ let cpsText = document.getElementById("cps-text")
 let cpImageContainer = document.querySelector('.cp-image-container')
 
 let cpc = 1;
-
 let cps = 0;
+
+const bgm = new Audio('./assets/audio/maou_bgm_cyber43.mp3') // credit: https://maou.audio/bgm_cyber43/
+
+
+
 
 const upgrades = []
 
@@ -44,6 +48,9 @@ function createUpgrades() {
 }
 
 function incrementCP(event) {
+    const clickingSound = new Audio('./assets/audio/maou_se_system45') // credit: https://maou.audio/se_system45/
+    clickingSound.play()
+
     CP.innerHTML = Math.round(parsedCP += cpc)
 
     const x = event.offsetX
@@ -65,11 +72,15 @@ const timeout = (div) => {
 }
 
 function buyUpgrade(upgrade) {
+
     const mu = upgrades.find((u) => {
         if (u.name === upgrade) return u
     })
 
     if (parsedCP >= mu.parsedCost) {
+        const upgradeSound = new Audio('./assets/audio/maou_se_magical15') // credit: https://maou.audio/se_magical15/
+        upgradeSound.play()
+
         CP.innerHTML = Math.round(parsedCP-= mu.parsedCost)
 
         mu.level.innerHTML++
@@ -133,6 +144,7 @@ setInterval(() => {
     CP.innerHTML = Math.round(parsedCP)
     cpcText.innerHTML = Math.round(cpc)
     cpsText.innerHTML = Math.round(cps)
+    bgm.play()
 }, 100);
 
 window.incrementCP = incrementCP
