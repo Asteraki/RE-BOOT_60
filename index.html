@@ -15,14 +15,14 @@ Author: Asteraki
   <section>
     <div class="main">
       <div class="left">
-        <h3>Computational Power: <br><br> <span class="computational-power blue-text">10000</span></h3>
+        <h3>Computational Power: <br><br> <span class="computational-power blue-text">0</span></h3>
         <div class="cp-image-container">
           <img class="click" onclick="incrementCP(event)" draggable="false" src="./assets/computational-power.png" alt="" srcset="">
         </div>
       </div>
 
       <script id="upgrade-template" type="text/template">
-        <div class="upgrade" onclick="buyUpgrade('{{name}}')">
+        <div class="upgrade" onclick="buyUpgrade('{{name}}')" id="{{name}}-upgrade">
           <div class="left-section">
             <img class="upgrade-icon" src="{{image}}" alt="" srcset="">
           </div>
@@ -35,16 +35,20 @@ Author: Asteraki
           </div>
           <div class="right-section">Level:<br><br><span class="{{name}}-level">0</span></div>
 
-          <div class="next-level-info">
-            <p>
+          <div class="next-level-info" id="{{name}}-next-level">
+            <p id="{{name}}-next-p">
               +<span class="{{name}}-increase">{{increase}}</span> CP<br>per click
             </p>
           </div>
         </div>
       </script>
 
-      <div class="right" id="upgrades-container">
-
+      <div class="right">
+        <div class="right-navbar">
+          <div id="upgrades-nav-button">Upgrade</div>
+          <div id="skills-nav-button">Skills</div>
+        </div>
+        <div id="upgrades-container"></div>
       </div>
 
 

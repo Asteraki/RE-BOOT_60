@@ -54,10 +54,38 @@ body {
     position: relative;
 }
 
-.right {
+.right-navbar {
+    display: flex;
+    font-weight: bold;
+    gap:1px
+}
+
+.right-navbar>div {
+    width: 140px;
+    height: 40px;
+    background-color: #1c1c2b;
+    border: 2px solid #8bffa3;
+    box-shadow: 0 0 10px #8bffa333;
+    text-align: center;
+    padding-top: 20px;
+}
+
+.right-navbar>:first-child {
+    border: 2px solid #58c5ff;
+    box-shadow: 0 0 10px #58c5ff33;
+}
+
+#upgrades-container {
     max-height: 500px;
     width: 700px;
     overflow-y: scroll;
+    position: relative;
+    padding: 20px;
+    border: 2px solid #58c5ff;
+    box-shadow: 0 0 10px #58c5ff33;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-top-right-radius: 5px;
 }
 
 .blue-text {

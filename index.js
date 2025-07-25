@@ -1,4 +1,4 @@
-import { defaultValues } from "./constants/defaultValues.js"
+import { defaultValues, powerUpIntervals } from "./constants/defaultValues.js"
 
 let CP = document.querySelector('.computational-power')
 let parsedCP = parseFloat(CP.innerHTML)
@@ -8,13 +8,14 @@ let cpsText = document.getElementById("cps-text")
 
 let cpImageContainer = document.querySelector('.cp-image-container')
 
+let upgradesNavButton = document.getElementById('upgrades-nav-button')
+let skillsNavButton = document.getElementById('skills-nav-button')
+
 let cpc = 1;
 let cps = 0;
 
-const bgm = new Audio('/assets/audio/maou_bgm_cyber43.mp3') // credit: https://maou.audio/bgm_cyber43/
-
-
-
+const bgm = new Audio('./assets/audio/maou_bgm_cyber43.mp3') // credit: https://maou.audio/bgm_cyber43/
+bgm.volume = 0.1
 
 const upgrades = []
 
@@ -41,6 +42,8 @@ function createUpgrades() {
             increase: upgradeElement.querySelector(`.${obj.name}-increase`),
             parsedIncrease: obj.increase,
             level: upgradeElement.querySelector(`.${obj.name}-level`),
+            powerUps: obj.powerUps,
+            power: obj.power,
             cpMultiplier: obj.cpMultiplier,
             costMultiplier: obj.costMultiplier,
         });
@@ -48,7 +51,8 @@ function createUpgrades() {
 }
 
 function incrementCP(event) {
-    const clickingSound = new Audio('/assets/audio/maou_se_system45') // credit: https://maou.audio/se_system45/
+    const clickingSound = new Audio('./assets/audio/maou_se_system45.mp3') // credit: https://maou.audio/se_system45/
+    clickingSound.volume = 0.05
     clickingSound.play()
 
     CP.innerHTML = Math.round(parsedCP += cpc)
@@ -77,26 +81,59 @@ function buyUpgrade(upgrade) {
         if (u.name === upgrade) return u
     })
 
+    const upgradeDiv = document.getElementById(`${mu.name}-upgrade`)
+    const nextLevelDiv = document.getElementById(`${mu.name}-next-level`)
+    const nextLevelP = document.getElementById(`${mu.name}-next-p`)
+
     if (parsedCP >= mu.parsedCost) {
-        const upgradeSound = new Audio('/assets/audio/maou_se_magical15') // credit: https://maou.audio/se_magical15/
+        const upgradeSound = new Audio('./assets/audio/maou_se_magical15.mp3') // credit: https://maou.audio/se_magical15/
+        upgradeSound.volume = 0.05
         upgradeSound.play()
 
         CP.innerHTML = Math.round(parsedCP-= mu.parsedCost)
 
-        mu.level.innerHTML++
+        let index = powerUpIntervals.indexOf(parseFloat(mu.level.innerHTML))
 
-        if (mu.name === 'ping-cycle') {
-            cpc += mu.parsedIncrease
-        } else {
-            cps += mu.parsedIncrease
+        if ( index !== -1 ) {
+            upgradeDiv.style.cssText = `border-color: #58c5ff`;
+            nextLevelDiv.style.cssText = `background-color: #1c1c2b`;
+            mu.cost.innerHTML = Math.round(mu.parsedCost *= mu.costMultiplier)
+
+            if ( mu.name === 'ping-cycle' ) {
+                cpc *= mu.powerUps[index].multiplier
+                nextLevelP.innerHTML = `+${mu.parsedIncrease} CP<br>per click`
+            } else {
+                cps -= mu.power
+                mu.power *= mu.powerUps[index].multiplier
+                cps += mu.power
+                nextLevelP.innerHTML = `+${mu.parsedIncrease} CP<br>per second`
+            }
         }
 
-        mu.parsedIncrease = parseFloat((mu.parsedIncrease * mu.cpMultiplier).toFixed(2))
-        mu.increase.innerHTML = mu.parsedIncrease
+        mu.level.innerHTML++
 
-        mu.parsedCost *= mu.costMultiplier
-        mu.cost.innerHTML = Math.round(mu.parsedCost)
+        index = powerUpIntervals.indexOf(parseFloat(mu.level.innerHTML))
 
+        if ( index !== -1 ) {
+            upgradeDiv.style.cssText = `border-color: #8bffa3`;
+            nextLevelDiv.style.cssText = `color: #8bffa3`;
+            nextLevelP.innerText = mu.powerUps[index].description
+
+            mu.cost.innerHTML = Math.round(mu.parsedCost * 2.5 * 1.004 ** parseFloat(mu.level.innerHTML))
+        } else {
+            mu.parsedIncrease = parseFloat((mu.parsedIncrease * mu.cpMultiplier).toFixed(2))
+            mu.cost.innerHTML = Math.round(mu.parsedCost *= mu.costMultiplier)
+
+            if ( mu.name === 'ping-cycle' ) nextLevelP.innerHTML = `+${mu.parsedIncrease} CP<br>per click`
+            else nextLevelP.innerHTML = `+${mu.parsedIncrease} CP<br>per second`
+        }
+
+        if ( mu.name === 'ping-cycle' ) cpc += mu.parsedIncrease
+        else {
+            cps -= mu.power
+            mu.power += mu.parsedIncrease
+            cps += mu.power
+        }
     }
 
 }
@@ -146,6 +183,7 @@ setInterval(() => {
     cpsText.innerHTML = Math.round(cps)
     bgm.play()
 }, 100);
+
 
 window.incrementCP = incrementCP
 window.buyUpgrade = buyUpgrade
