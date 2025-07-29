@@ -22,18 +22,20 @@ Author: Asteraki
       </div>
 
       <script id="upgrade-template" type="text/template">
-        <div class="upgrade" onclick="buyUpgrade('{{name}}')" id="{{name}}-upgrade">
-          <div class="left-section">
-            <img class="upgrade-icon" src="{{image}}" alt="" srcset="">
-          </div>
-          <div class="mid-section">
-            <h4>{{displayName}}</h4>
-            <div class="cost-info">
-              <p class="cost-text"><span class="{{name}}-cost">{{cost}}</span></p>
-              <img class="cost-icon" src="assets/computational-power-icon.png" alt="" srcset="">
+        <div class="upgrade type-{{type}}" onclick="buyUpgrade('{{name}}')" id="{{name}}-upgrade">
+          <div class="upgrade-inner">
+            <div class="left-section">
+              <img class="upgrade-icon" src="{{image}}" alt="" srcset="">
             </div>
+            <div class="mid-section">
+              <h4>{{displayName}}</h4>
+              <div class="cost-info">
+                <p class="cost-text"><span class="{{name}}-cost">{{cost}}</span></p>
+                <img class="cost-icon" src="assets/computational-power-icon.png" alt="" srcset="">
+              </div>
+            </div>
+            <div class="right-section">Level:<br><br><span class="{{name}}-level">0</span></div>
           </div>
-          <div class="right-section">Level:<br><br><span class="{{name}}-level">0</span></div>
 
           <div class="next-level-info" id="{{name}}-next-level">
             <p id="{{name}}-next-p">
@@ -47,6 +49,7 @@ Author: Asteraki
         <div class="right-navbar">
           <div id="upgrades-nav-button">Upgrade</div>
           <div id="skills-nav-button">Skills</div>
+          <div id="artifacts-nav-button">Artifacts</div>
         </div>
         <div id="upgrades-container"></div>
       </div>
@@ -62,16 +65,16 @@ Author: Asteraki
     </div>
 
     <div class="util-buttons">
-      <button class="util-button" onclick="save()">
-        Save
-      </button>
-      <br>
-      <button class="util-button" onclick="load()">
-        Load
-      </button>
+      <button class="util-button prestige-button" onclick="prestige()">Prestige</button>
+      <button class="util-button" onclick="save()">Save</button>
+      <button class="util-button" onclick="load()">Load</button>
     </div>
+
+    <div class="relic">Relic: <span id="relic">0</span></div>
   </section>
 
   <script type="module" src="./index.js"></script>
+  <script type="module" src="./constants/skills.js"></script>
+  <script type="module" src="./constants/artifacts.js"></script>
 </body>
 </html>

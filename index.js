@@ -1,4 +1,10 @@
-import { defaultValues, powerUpIntervals } from "./constants/defaultValues.js"
+import { initUpgrades, getUpgrades, powerUpIntervals } from "./constants/upgrades.js"
+import { defaultUpgradeValues } from "./constants/defaultValues.js"
+import { nf } from "./utils/formatter.js"
+
+window.addEventListener("DOMContentLoaded", () => {
+    initUpgrades()
+})
 
 let CP = document.querySelector('.computational-power')
 let parsedCP = parseFloat(CP.innerHTML)
@@ -10,52 +16,23 @@ let cpImageContainer = document.querySelector('.cp-image-container')
 
 let upgradesNavButton = document.getElementById('upgrades-nav-button')
 let skillsNavButton = document.getElementById('skills-nav-button')
+let artifactsNavButton = document.getElementById('artifacts-nav-button')
 
+let prestigeButton = document.querySelector(".prestige-button")
+
+let relic = document.getElementById("relic")
 let cpc = 1;
 let cps = 0;
 
 const bgm = new Audio('./assets/audio/maou_bgm_cyber43.mp3') // credit: https://maou.audio/bgm_cyber43/
 bgm.volume = 0.1
 
-const upgrades = []
-
-function createUpgrades() {
-    const upgradesContainer = document.getElementById('upgrades-container')
-    const template = document.getElementById('upgrade-template').textContent
-
-    defaultValues.forEach((obj) => {
-        let html = template
-
-        Object.keys(obj).forEach((key) => {
-            const regex = new RegExp(`{{${key}}}`, 'g');
-            html = html.replace(regex, obj[key])
-        })
-
-        upgradesContainer.insertAdjacentHTML('beforeend', html);
-
-        const upgradeElement = upgradesContainer.lastElementChild;
-
-        upgrades.push({
-            name: obj.name,
-            cost: upgradeElement.querySelector(`.${obj.name}-cost`),
-            parsedCost: obj.cost,
-            increase: upgradeElement.querySelector(`.${obj.name}-increase`),
-            parsedIncrease: obj.increase,
-            level: upgradeElement.querySelector(`.${obj.name}-level`),
-            powerUps: obj.powerUps,
-            power: obj.power,
-            cpMultiplier: obj.cpMultiplier,
-            costMultiplier: obj.costMultiplier,
-        });
-    })
-}
-
 function incrementCP(event) {
     const clickingSound = new Audio('./assets/audio/maou_se_system45.mp3') // credit: https://maou.audio/se_system45/
     clickingSound.volume = 0.05
     clickingSound.play()
 
-    CP.innerHTML = Math.round(parsedCP += cpc)
+    CP.innerHTML = nf(parsedCP += cpc)
 
     const x = event.offsetX
     const y = event.offsetY
@@ -76,7 +53,7 @@ const timeout = (div) => {
 }
 
 function buyUpgrade(upgrade) {
-
+    const upgrades = getUpgrades()
     const mu = upgrades.find((u) => {
         if (u.name === upgrade) return u
     })
@@ -90,7 +67,7 @@ function buyUpgrade(upgrade) {
         upgradeSound.volume = 0.05
         upgradeSound.play()
 
-        CP.innerHTML = Math.round(parsedCP-= mu.parsedCost)
+        CP.innerHTML = nf(parsedCP-= mu.parsedCost)
 
         let index = powerUpIntervals.indexOf(parseFloat(mu.level.innerHTML))
 
@@ -110,7 +87,8 @@ function buyUpgrade(upgrade) {
             }
         }
 
-        mu.level.innerHTML++
+        mu.level.innerHTML = parseInt(mu.level.innerHTML) + 1
+        console.log(mu.level)
 
         index = powerUpIntervals.indexOf(parseFloat(mu.level.innerHTML))
 
@@ -140,7 +118,7 @@ function buyUpgrade(upgrade) {
 
 function save() {
     localStorage.clear()
-
+    const upgrades = getUpgrades()
     upgrades.map((upgrade) => {
 
         const obj = JSON.stringify({
@@ -158,6 +136,7 @@ function save() {
 }
 
 function load() {
+    const upgrades = getUpgrades()
     upgrades.map((upgrade) => {
 
         const savedValues = JSON.parse(localStorage.getItem(upgrade.name))
@@ -176,20 +155,75 @@ function load() {
 
 }
 
+function prestige() {
+    const upgrades = getUpgrades()
+    upgrades.map((upgrade) => {
+        const mu = defaultUpgradeValues.find((u) => { if (upgrade.name === u.name) return u})
+
+        upgrade.parsedCost = mu.cost
+        upgrade.parsedIncrease = mu.increase
+
+        upgrade.level.innerHTML = 0
+        upgrade.cost.innerHTML = Math.round(mu.cost)
+        upgrade.increase.innerHTML = mu.increase
+
+        const upgradeDiv = document.getElementById(`${mu.name}-upgrade`)
+        const nextLevelDiv = document.getElementById(`${mu.name}-next-level`)
+        const nextLevelP = document.getElementById(`${mu.name}-next-p`)
+        upgradeDiv.style.cssText = `border-color: #58c5ff`;
+        nextLevelDiv.style.cssText = `background-color: #1c1c2b`;
+        nextLevelP.innerHTML = `+${mu.increase} CP<br>per click`
+    })
+
+    relic.innerHTML = Math.ceil(Math.sqrt(parsedCP - 999_999) / 300)
+
+    cpc = 1
+    cps = 0
+    parsedCP = 0
+    CP.innerHTML = parsedCP
+}
+
 setInterval(() => {
     parsedCP += cps/10
-    CP.innerHTML = Math.round(parsedCP)
+    CP.innerHTML = nf(parsedCP)
     cpcText.innerHTML = Math.round(cpc)
     cpsText.innerHTML = Math.round(cps)
     bgm.play()
+
+    if (parsedCP >= 1_000_000 )  prestigeButton.style.display = "block"
+    else prestigeButton.style.display = "none"
 }, 100);
 
+skillsNavButton.addEventListener("click", function() {
+    const upgradeContainers = document.querySelectorAll(".upgrade")
+
+    upgradeContainers.forEach((container) => {
+        if ( container.classList.contains('type-skill') ) container.style.display = "block"
+        else container.style.display = "none"
+    })
+})
+
+upgradesNavButton.addEventListener("click", function() {
+    const upgradeContainers = document.querySelectorAll(".upgrade")
+
+    upgradeContainers.forEach((container) => {
+        if ( container.classList.contains('type-upgrade') ) container.style.display = "block"
+        else container.style.display = "none"
+    })
+})
+
+artifactsNavButton.addEventListener("click", function() {
+    const upgradeContainers = document.querySelectorAll(".upgrade")
+
+    upgradeContainers.forEach((container) => {
+        if ( container.classList.contains('type-artifact') ) container.style.display = "block"
+        else container.style.display = "none"
+    })
+})
 
 window.incrementCP = incrementCP
 window.buyUpgrade = buyUpgrade
 window.save = save
 window.load = load
+window.prestige = prestige
 
-document.addEventListener("DOMContentLoaded", () => {
-    createUpgrades();
-});

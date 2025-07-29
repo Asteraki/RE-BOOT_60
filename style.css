@@ -61,22 +61,32 @@ body {
 }
 
 .right-navbar>div {
-    width: 140px;
+    width: 170px;
     height: 40px;
     background-color: #1c1c2b;
-    border: 2px solid #8bffa3;
-    box-shadow: 0 0 10px #8bffa333;
+    border: 2px solid #58c5ff;
+    box-shadow: 0 0 10px #58c5ff33;
     text-align: center;
     padding-top: 20px;
 }
 
-.right-navbar>:first-child {
-    border: 2px solid #58c5ff;
-    box-shadow: 0 0 10px #58c5ff33;
+.right-navbar>div:hover {
+    opacity: 0.85;
+    cursor: pointer
+}
+
+.right-navbar>:nth-child(2) {
+    border: 2px solid #8bffa3;
+    box-shadow: 0 0 10px #8bffa333;
+}
+
+.right-navbar>:nth-child(3) {
+    border: 2px solid #effa79;
+    box-shadow: 0 0 10px #effa7933;
 }
 
 #upgrades-container {
-    max-height: 500px;
+    max-height: 400px;
     width: 700px;
     overflow-y: scroll;
     position: relative;
@@ -87,6 +97,7 @@ body {
     border-bottom-right-radius: 5px;
     border-top-right-radius: 5px;
 }
+
 
 .blue-text {
     font-size: 32px;
@@ -115,9 +126,7 @@ body {
 }
 
 .upgrade {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    display: block;
     width: 500px;
     height: 90px;
     padding: 15px 25px;
@@ -127,6 +136,25 @@ body {
     border-radius: 5px;
     position: relative;
     margin-bottom: 20px;
+}
+
+.upgrade:hover .upgrade-inner {
+    opacity: 0.85;
+    cursor: pointer;
+}
+
+.upgrade-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.type-skill {
+    display: none;
+}
+
+.type-artifact {
+    display: none;
 }
 
 .mid-section h4 {
@@ -141,7 +169,8 @@ body {
 
 .next-level-info {
     position: absolute;
-    right: -105px;
+    right: -135px;
+    top:50px;
     border: 2px solid #8bffa3;
     background-color: #1c1c2b;
     box-shadow: 0 0 10px #8bffa333;
@@ -149,7 +178,7 @@ body {
     height: 75px;
     width: 200px;
     text-align: center;
-    display:none;
+    display: none;
 }
 
 .upgrade:hover .next-level-info {
@@ -200,6 +229,15 @@ body {
 .util-button:hover {
     opacity: 0.7;
     cursor: pointer;
+}
+
+.relic {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 20px;
+    font-weight: bold;
 }
 
 .fade-up {
